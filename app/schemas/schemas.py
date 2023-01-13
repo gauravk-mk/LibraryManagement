@@ -21,12 +21,14 @@ class Book(BookBase):
 
 class UserBase(BaseModel):
     email: str
-    name: str
 
 
 class UserCreate(UserBase):
+    name : str
     password: str
 
+class UserLoginSchema(UserBase):
+    password: str
 
 class User(UserBase):
     id: int
