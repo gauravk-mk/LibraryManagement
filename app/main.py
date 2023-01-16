@@ -5,7 +5,7 @@ import uvicorn
 # from fastapi.templating import Jinja2Templates
 
 
-from app.routers import users, books
+from app.routers import users, books, admin
 
 app=FastAPI()
 
@@ -14,6 +14,7 @@ app=FastAPI()
 
 app.include_router(users.router)
 app.include_router(books.router)
+app.include_router(admin.router)
 
 
 @app.get("/")

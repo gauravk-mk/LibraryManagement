@@ -19,7 +19,7 @@ async def get_books(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
     return books
 
 @router.post('/', tags=["books"])
-def issue_book(payload:schemas.BookBase, db: Session=Depends(get_db)):
+def addbook(payload:schemas.BookBase, db: Session=Depends(get_db)):
     new_book = models.Book(**payload.dict())
     db.add(new_book)
     db.commit()

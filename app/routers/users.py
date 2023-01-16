@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Body
+from fastapi import APIRouter, Depends, Body,HTTPException, status
 from ..models import models
 from ..schemas import schemas
 from ..auth.jwt_bearer import JWTBearer
@@ -31,4 +31,31 @@ async def user_login(db: Session = Depends(get_db),user: schemas.UserLoginSchema
             "error":"Invalid Credential!"
         }
 
-    
+#to issue a book from books database
+
+
+@router.get('/users/issuebook/{title}',tags=["users"])
+async def issue_book(title: str, db: Session = Depends(get_db)):
+    book = db.query(models.Book).filter(models.Book.title == title).first()
+    if not book:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"No Book with this title: {title} found")
+    else:
+        return {"status" : "success", "note": book}
+        #add book in db of user account remove book from db of book
+
+#post
+
+
+#for referance
+@router.get('/{BookId}')
+def get_book(bookId: str, db: Session = Depends(get_db)):
+    book = db.query(models.Book).filter(models.Book.id == bookId).first()
+    if not book:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"No Book with this id: {id} found")
+    else:
+        return {"status": "success", "note": book}
+
+
+
