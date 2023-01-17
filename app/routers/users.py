@@ -5,9 +5,11 @@ from ..auth.jwt_bearer import JWTBearer
 from ..auth.jwt_handler import signJWT
 from sqlalchemy.orm import Session
 from app.dependencies import get_db
+from datetime import date, timedelta
 
 
 router = APIRouter()
+
 
 @router.get("/users/", tags=["users"])
 async def get_users(db: Session = Depends(get_db)):
@@ -32,9 +34,22 @@ async def user_login(db: Session = Depends(get_db),user: schemas.UserLoginSchema
         }
 
 #to issue a book from books database
-@router.put('/users/issuebook/{id}',tags=["users"])
-async def issue_bookToAcc(acc:schemas.LibraryAccountBase = Body(default=None), db: Session = Depends(get_db)):
+@router.put('/users/issuebook/{id}',tags=["Account-Activity"],dependencies=[Depends(JWTBearer())])
+async def issue_Book(acc:schemas.LibraryAccountBase = Body(default=None), db: Session = Depends(get_db)):
     return issue_account(db,acc)
+
+@router.delete('/users/returnbook/{id}',tags=["Account-Activity"],dependencies=[Depends(JWTBearer())])
+async def return_book(id: int, db: Session = Depends(get_db)):
+    current_acc = getAccountByIssueId(id,db)
+    book_id = current_acc.book_id
+    book= getBookbyId(book_id,db)
+    book.quantity = book.quantity+1
+    db.delete(current_acc)
+    db.commit()
+    db.refresh(book)
+    return book
+
+
 
 def isBookAvailable(id,db):
     book = getBookbyId(id,db)
@@ -44,20 +59,6 @@ def isBookAvailable(id,db):
     else:
         return True
         
-
-@router.put('/users/returnbook/{id}',tags=["users"])
-async def return_book(id: int, db: Session = Depends(get_db)):
-    book= getBookbyId(id,db)
-
-    
-@router.get('/users/issuebook/{id}',tags=["users"])
-async def get_book(id: str, db: Session = Depends(get_db)):
-    book = getBookbyId(id,db)
-    if not book and book.quantity ==0 :
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"No Book with this title: {id} found")
-    else:       
-        return {"status" : "success", "note": book}
 
 def getUserbyId(id, db):
     user = db.query(models.User).filter(models.User.id==id).first()
@@ -75,22 +76,44 @@ def getBookbyId(id,db):
     else:
         return book
 
+def getAccountByIssueId(id,db):
+    acc = db.query(models.LibraryAccount).filter(models.LibraryAccount.acc_id==id).first()
+    if not acc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"No Account with this ID found")
+    else:
+        return acc
 
 # @router.post('/users/acount',tags=["users"])
 def issue_account(db, acc):
     currBookId = acc.book_id
     new_acc = models.LibraryAccount(
         book_id=currBookId, 
-        owner_id = acc.owner_id
+        owner_id = acc.owner_id,
         )
+    
     curr_book = getBookbyId(currBookId,db)
     if isBookAvailable(currBookId,db):  
         curr_book.quantity = curr_book.quantity-1
     db.add(new_acc)
     db.commit()
-    return {"status": curr_book}
+    curr_book = getBookbyId(currBookId,db)
+    return {"status": curr_book, 
+            "issue_id": new_acc.acc_id
+    }
 
 
 
 
+
+
+    
+# @router.get('/users/issuebook/{id}',tags=["users"])
+# async def get_book(id: str, db: Session = Depends(get_db)):
+#     book = getBookbyId(id,db)
+#     if not book and book.quantity ==0 :
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+#                             detail=f"No Book with this title: {id} found")
+#     else:       
+#         return {"status" : "success", "note": book}
 

@@ -48,7 +48,7 @@ class LibraryAcoount(LibraryAccountBase):
     acc_id : int
     user_name: str
     date_issued = date.isoformat(date.today())
-    valid_till = date.isoformat(date.today() + timedelta(days=15))
+    valid_till = date.isoformat(date.today()+ timedelta(days=15))
 
     class Config:
         orm_mode = True

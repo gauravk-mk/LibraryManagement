@@ -42,4 +42,4 @@ class LibraryAccount(Base):
     owner_id = Column(Integer)
     book_id = Column(Integer)
     date_issued = Column(DateTime(timezone=True), server_default=func.now())
-    valid_till = Column(DateTime(timezone=True), server_default=func.now())
+    valid_till = Column(DateTime(timezone=True),server_default=func.now())

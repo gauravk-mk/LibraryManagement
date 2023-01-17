@@ -14,8 +14,8 @@ router = APIRouter(
 )
 
 @router.get("/books/", tags=["books"])
-async def get_books(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    books = db.query(models.Book).offset(skip).limit(limit).all()
+async def get_books(db: Session = Depends(get_db)):
+    books = db.query(models.Book).all()
     return books
 
 @router.post('/', tags=["books"])

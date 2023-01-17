@@ -9,8 +9,8 @@ from app.dependencies import get_db
 router = APIRouter()
 
 @router.get("/admin/", tags=["admin"])
-async def get_admin(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    admin = db.query(models.LibraryAdmin).offset(skip).limit(limit).all()
+async def get_admin(db: Session = Depends(get_db)):
+    admin = db.query(models.LibraryAdmin).all()
     return admin
 
 @router.post("/admin/signup",tags=["admin"])
