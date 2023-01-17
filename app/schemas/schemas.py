@@ -1,5 +1,5 @@
 from typing import List, Union
-
+from datetime import date, timedelta
 from pydantic import BaseModel
 
 
@@ -10,10 +10,10 @@ class BookBase(BaseModel):
 
 class BookCreate(BookBase):
     pass
-
+    
 class Book(BookBase):
     id: int
-    owner_id: int
+    quantity:int
 
     class Config:
         orm_mode = True
@@ -38,3 +38,18 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+
+
+class LibraryAccountBase(BaseModel):
+    book_id :int
+    owner_id:int
+
+class LibraryAcoount(LibraryAccountBase):
+    acc_id : int
+    user_name: str
+    date_issued = date.isoformat(date.today())
+    valid_till = date.isoformat(date.today() + timedelta(days=15))
+
+    class Config:
+        orm_mode = True
+  

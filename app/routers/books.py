@@ -19,7 +19,7 @@ async def get_books(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
     return books
 
 @router.post('/', tags=["books"])
-def addbook(payload:schemas.BookBase, db: Session=Depends(get_db)):
+def addbook(payload:schemas.Book, db: Session=Depends(get_db)):
     new_book = models.Book(**payload.dict())
     db.add(new_book)
     db.commit()
@@ -33,5 +33,6 @@ def get_book(bookId: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"No Book with this id: {id} found")
     return {"status": "success", "note": book}
+
 
 

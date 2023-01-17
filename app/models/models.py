@@ -1,6 +1,7 @@
-from sqlalchemy import Boolean, Column, Integer, PrimaryKeyConstraint, String, ForeignKey
+from sqlalchemy import Boolean, Column, Integer, DateTime, String, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database import Base
+from sqlalchemy.sql import func
 
 class User(Base):
     __tablename__="users"
@@ -30,28 +31,15 @@ class Book(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
     description = Column(String, index=True)
+    quantity=Column(Integer)
     owner_id = Column(Integer, ForeignKey("users.id"))
  
     owner = relationship("User", back_populates="books")
 
-
-#not in use 
-class UserLogin(Base):
-    __tablename__ ="userlogin"
-    login_id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    password = Column(String)
-    class Config:
-        the_schema = {
-            "user_demo":{
-                "email":"gaurav@gmail.com",
-                "password":"123"
-            }
-        }   
-
-#User Account for checking books borrowed
-# class UserAccount(Base):
-#     __tablename__ ="account"
-#     acc_id = Column(Integer,primary_key=True, index=True )
-#     Books_issued = Column(Integer, ForeignKey(Book.id))
-#     Books_issued = relationship("Book", back_populates="owner")
+class LibraryAccount(Base):
+    __tablename__ = "accounts"
+    acc_id = Column(Integer, primary_key=True, index=True)
+    owner_id = Column(Integer)
+    book_id = Column(Integer)
+    date_issued = Column(DateTime(timezone=True), server_default=func.now())
+    valid_till = Column(DateTime(timezone=True), server_default=func.now())
