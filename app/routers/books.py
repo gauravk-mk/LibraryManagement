@@ -20,7 +20,7 @@ async def get_books(db: Session = Depends(get_db)):
 
 @router.post('/', tags=["books"])
 def addbook(payload:schemas.Book, db: Session=Depends(get_db)):
-    new_book = models.Book(**payload.dict())
+    new_book = models.Book(title=payload.title, description=payload.description, quantity=payload.quantity)
     db.add(new_book)
     db.commit()
     db.refresh(new_book)
@@ -30,9 +30,7 @@ def addbook(payload:schemas.Book, db: Session=Depends(get_db)):
 def get_book(bookId: str, db: Session = Depends(get_db)):
     book = db.query(models.Book).filter(models.Book.id == bookId).first()
     if not book:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+        raise HTTPException(status_code=status.HTTP_404555_NOT_FOUND,
                             detail=f"No Book with this id: {id} found")
     return {"status": "success", "note": book}
-
-
 

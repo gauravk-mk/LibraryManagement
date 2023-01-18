@@ -7,7 +7,7 @@ from ...routers.users import user_login
 
 
 router = APIRouter(include_in_schema=False)
-templates = Jinja2Templates(directory="lib-sys/templates")
+templates = Jinja2Templates(directory="app/templates")
 
 
 @router.get("/login")
