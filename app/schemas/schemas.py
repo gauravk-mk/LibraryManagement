@@ -1,6 +1,12 @@
 from typing import List, Union
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from pydantic import BaseModel
+
+
+class appBase(BaseModel):
+    created_by: int
+    created_on: date
+
 
 
 class BookBase(BaseModel):
@@ -47,8 +53,8 @@ class LibraryAccountBase(BaseModel):
 class LibraryAcoount(LibraryAccountBase):
     acc_id : int
     user_name: str
-    date_issued = date.isoformat(date.today())
-    valid_till = date.isoformat(date.today()+ timedelta(days=15))
+    date_issued = str
+    valid_till = str
 
     class Config:
         orm_mode = True

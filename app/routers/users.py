@@ -5,7 +5,8 @@ from ..auth.jwt_bearer import JWTBearer
 from ..auth.jwt_handler import signJWT
 from sqlalchemy.orm import Session
 from app.dependencies import get_db
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
+
 
 
 router = APIRouter()
@@ -87,9 +88,13 @@ def getAccountByIssueId(id,db):
 # @router.post('/users/acount',tags=["users"])
 def issue_account(db, acc):
     currBookId = acc.book_id
+    curr_date = date.isoformat(date.today())
+    last_date = date.isoformat(datetime.now()+ timedelta(days=15))
     new_acc = models.LibraryAccount(
         book_id=currBookId, 
         owner_id = acc.owner_id,
+        date_issued = curr_date,
+        valid_till = last_date
         )
     
     curr_book = getBookbyId(currBookId,db)
@@ -98,8 +103,9 @@ def issue_account(db, acc):
     db.add(new_acc)
     db.commit()
     curr_book = getBookbyId(currBookId,db)
-    return {"status": curr_book, 
-            "issue_id": new_acc.acc_id
+    return {"status": new_acc, 
+            "issue_id": new_acc.acc_id,
+            "Book Bought": curr_book
     }
 
 
