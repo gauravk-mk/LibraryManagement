@@ -1,12 +1,13 @@
 from typing import List, Union
 from datetime import date, timedelta, datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 
-class appBase(BaseModel):
-    created_by: int
-    created_on: date
-
+# class appBase(BaseModel):
+#     created_by: int
+#     created_on: str
+#     modified_by: int
+#     modified_on: str
 
 
 class BookBase(BaseModel):
@@ -29,9 +30,17 @@ class UserBase(BaseModel):
     email: str
 
 
-class UserCreate(UserBase):
+class UserCreatedefault(BaseModel):
     name : str
     password: str
+    email: str
+
+class UserCreate(UserCreatedefault):
+    created_by: str
+    created_on: str
+    modified_by: int
+    modified_on: str
+
 
 class UserLoginSchema(UserBase):
     password: str

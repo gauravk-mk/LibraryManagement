@@ -4,12 +4,12 @@ from ..models import models
 from ..schemas import schemas
 from sqlalchemy.orm import Session
 from app.dependencies import get_db
-
+from .users import get_user_from_token
+from ..auth.login import oauth2_scheme
 
 router = APIRouter(
     prefix="/books",
     tags=["books"],
-    dependencies=[Depends(JWTBearer())],
     responses={404: {"description": "Not found"}},
 )
 
@@ -19,8 +19,16 @@ async def get_books(db: Session = Depends(get_db)):
     return books
 
 @router.post('/', tags=["books"])
-def addbook(payload:schemas.Book, db: Session=Depends(get_db)):
-    new_book = models.Book(title=payload.title, description=payload.description, quantity=payload.quantity)
+def addbook(payload:schemas.Book, db: Session=Depends(get_db),token: str = Depends(oauth2_scheme)):
+    user = get_user_from_token(db, token)
+    new_book = models.Book(title=payload.title, 
+                            description=payload.description, 
+                            quantity=payload.quantity, 
+                            created_by = user.email,
+                            modified_by = user.email
+                            )
+    
+    
     db.add(new_book)
     db.commit()
     db.refresh(new_book)

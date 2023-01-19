@@ -2,14 +2,45 @@ from fastapi import APIRouter, Depends, Body,HTTPException, status
 from ..models import models
 from ..schemas import schemas
 from ..auth.jwt_bearer import JWTBearer
-from ..auth.jwt_handler import signJWT
+from ..auth.jwt_handler import signJWT, decodeJWT
+
+from fastapi.security import OAuth2PasswordRequestForm
+from ..auth.login import oauth2_scheme
+
 from sqlalchemy.orm import Session
 from app.dependencies import get_db
 from datetime import date, timedelta, datetime
+from ..auth.hashing import Hasher
 
+from jose import jwt
+from decouple import config
 
-
+JWT_SECRET = config("secret")
+JWT_ALGORITHM = config("algorithm")
 router = APIRouter()
+
+
+def get_user_from_token(db, token):
+    try:
+        payload = jwt.decode(token, JWT_SECRET, JWT_ALGORITHM)
+        username = payload.get("sub")
+        if not username:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Could not validate Credentials",
+            )
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate Credetials",
+        )
+    user = db.query(models.User).filter(models.User.email == username).first()
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+        )
+    return user
 
 
 @router.get("/users/", tags=["users"])
@@ -18,8 +49,8 @@ async def get_users(db: Session = Depends(get_db)):
     return users
 
 @router.post("/users/signup",tags=["users"])
-async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = models.User(email=user.email, name=user.name, hashed_password = user.password)
+async def create_user(user: schemas.UserCreatedefault, db: Session = Depends(get_db)):
+    db_user = models.User(email=user.email, name=user.name, hashed_password = Hasher.get_hash_password(user.password),created_by=user.email, modified_by= user.email)
     db.add(db_user)
     db.commit()
     return signJWT(db_user.email)
@@ -34,13 +65,14 @@ async def user_login(db: Session = Depends(get_db),user: schemas.UserLoginSchema
             "error":"Invalid Credential!"
         }
 
+
 #to issue a book from books database
-@router.put('/users/issuebook/{id}',tags=["Account-Activity"],dependencies=[Depends(JWTBearer())])
-async def issue_Book(acc:schemas.LibraryAccountBase = Body(default=None), db: Session = Depends(get_db)):
+@router.put('/users/issuebook/{id}',tags=["Account-Activity"])
+async def issue_Book(acc:schemas.LibraryAccountBase = Body(default=None), db: Session = Depends(get_db),token: str = Depends(oauth2_scheme)):
     return issue_account(db,acc)
 
-@router.delete('/users/returnbook/{id}',tags=["Account-Activity"],dependencies=[Depends(JWTBearer())])
-async def return_book(id: int, db: Session = Depends(get_db)):
+@router.delete('/users/returnbook/{id}',tags=["Account-Activity"])
+async def return_book(id: int, db: Session = Depends(get_db),token: str = Depends(oauth2_scheme)):
     current_acc = getAccountByIssueId(id,db)
     book_id = current_acc.book_id
     book= getBookbyId(book_id,db)
@@ -59,7 +91,16 @@ def isBookAvailable(id,db):
                             detail=f"No Book with this id: {id} found")
     else:
         return True
-        
+
+
+def getUserbyUsername(username, db):
+    user = db.query(models.User).filter(models.User.name==username).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"No User with this ID found")
+    else:
+        return user
+ 
 
 def getUserbyId(id, db):
     user = db.query(models.User).filter(models.User.id==id).first()
@@ -88,15 +129,18 @@ def getAccountByIssueId(id,db):
 # @router.post('/users/acount',tags=["users"])
 def issue_account(db, acc):
     currBookId = acc.book_id
+    curr_user_id = acc.owner_id
+    user = getUserbyId(curr_user_id,db)
     curr_date = date.isoformat(date.today())
     last_date = date.isoformat(datetime.now()+ timedelta(days=15))
     new_acc = models.LibraryAccount(
         book_id=currBookId, 
-        owner_id = acc.owner_id,
+        owner_id = curr_user_id,
         date_issued = curr_date,
-        valid_till = last_date
-        )
-    
+        valid_till = last_date,
+        created_by = user.email,
+        modified_by = user.email,
+        )    
     curr_book = getBookbyId(currBookId,db)
     if isBookAvailable(currBookId,db):  
         curr_book.quantity = curr_book.quantity-1

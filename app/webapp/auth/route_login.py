@@ -31,3 +31,4 @@ async def login(request: Request, db: Session = Depends(get_db)):
             form.__dict__.get("errors").append("Incorrect Username or password")
             return templates.TemplateResponse("auth/login.html", form.__dict__)
     return templates.TemplateResponse("auth/login.html", form.__dict__)
+
