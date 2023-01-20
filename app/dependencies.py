@@ -1,5 +1,5 @@
-from app.database import SessionLocal, engine
-from app.models import models
+from database import SessionLocal, engine
+from models import models
 
 
 models.Base.metadata.create_all(bind=engine)

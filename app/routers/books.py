@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, HTTPException, status,Response
-from ..auth.jwt_bearer import JWTBearer
-from ..models import models
-from ..schemas import schemas
+from auth.jwt_bearer import JWTBearer
+from models import models
+from schemas import schemas
 from sqlalchemy.orm import Session
-from app.dependencies import get_db
+from dependencies import get_db
 from .users import get_user_from_token
-from ..auth.login import oauth2_scheme
+from auth.login import oauth2_scheme
 
 router = APIRouter(
     prefix="/books",

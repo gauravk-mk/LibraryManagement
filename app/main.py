@@ -1,14 +1,12 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
-import uvicorn
+from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
-from app.routers import users, books
-from app.auth import login
-from app.webapp.base import api_router as webapp_router
+from routers import users, books
+from auth import login
+from webapp.base import api_router as webapp_router
 from fastapi.staticfiles import StaticFiles
 
 
-templates = Jinja2Templates(directory="app/templates")
+templates = Jinja2Templates(directory="templates")
 
 def include_router(app):
     app.include_router(users.router)
@@ -18,7 +16,7 @@ def include_router(app):
 
 
 def configure_static(app):
-    app.mount("/app/static",StaticFiles(directory="app/static"),name="static")
+    app.mount("/static",StaticFiles(directory="static"),name="static")
 
 
 def start_application():

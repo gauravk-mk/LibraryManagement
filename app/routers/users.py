@@ -1,16 +1,16 @@
 from fastapi import APIRouter, Depends, Body,HTTPException, status
-from ..models import models
-from ..schemas import schemas
-from ..auth.jwt_bearer import JWTBearer
-from ..auth.jwt_handler import signJWT, decodeJWT
+from models import models
+from schemas import schemas
+from auth.jwt_bearer import JWTBearer
+from auth.jwt_handler import signJWT, decodeJWT
 
 from fastapi.security import OAuth2PasswordRequestForm
-from ..auth.login import oauth2_scheme
-
+# from ..auth.login import oauth2_scheme
+from auth.login import oauth2_scheme
 from sqlalchemy.orm import Session
-from app.dependencies import get_db
+from dependencies import get_db
 from datetime import date, timedelta, datetime
-from ..auth.hashing import Hasher
+from auth.hashing import Hasher
 
 from jose import jwt
 from decouple import config
@@ -42,6 +42,19 @@ def get_user_from_token(db, token):
         )
     return user
 
+def create_new_user(user: schemas.UserCreate, db: Session):
+    user = models.User(
+        name=user.name,
+        email=user.email,
+        hashed_password=Hasher.get_hash_password(user.password),
+        is_active=True,
+        created_by=user.email, created_on= datetime.utcnow(), 
+        modified_by= user.email, modified_on= datetime.utcnow()
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
 
 @router.get("/users/", tags=["users"])
 async def get_users(db: Session = Depends(get_db)):

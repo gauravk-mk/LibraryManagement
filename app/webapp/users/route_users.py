@@ -1,14 +1,16 @@
-from ...routers.users import create_user
-from ...dependencies import get_db
+from routers.users import create_new_user
+from dependencies import get_db
 from fastapi import APIRouter, Depends, Request, responses, status
 from fastapi.templating import Jinja2Templates
-from ...schemas.schemas import UserCreate
+from schemas.schemas import UserCreate
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from ...webapp.users.forms import UserCreateForm
+from webapp.users.forms import UserCreateForm
+from datetime import date, timedelta, datetime
+
 
 router = APIRouter(include_in_schema=False)
-templates = Jinja2Templates(directory="app/templates")
+templates = Jinja2Templates(directory="templates")
 
 
 @router.get("/register")
@@ -24,10 +26,12 @@ async def register(request: Request, db: Session = Depends(get_db)):
     await form.load_data()
     if await form.is_valid():
         user = UserCreate(
-            name=form.username, email=form.email, password=form.password
+            name=form.username, email=form.email, password=form.password,
+            created_by=form.email, created_on= datetime.utcnow(), 
+            modified_by= form.email, modified_on= datetime.utcnow()
         )
         try:
-            user = create_user(user=user, db=db)
+            user = create_new_user(user=user, db=db)
             return responses.RedirectResponse(
                 "/?msg=Successfully-Registered", status_code=status.HTTP_302_FOUND
             )  # default is post request, to use get request added status code 302

@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from ...dependencies import get_db
-from ...webapp.auth.forms import LoginForm
-from ...routers.users import user_login
+from dependencies import get_db
+from webapp.auth.forms import LoginForm
+from routers.login import login_for_access_token
 
 
 router = APIRouter(include_in_schema=False)
-templates = Jinja2Templates(directory="app/templates")
+templates = Jinja2Templates(directory="templates")
 
 
 @router.get("/login")
@@ -24,7 +24,7 @@ async def login(request: Request, db: Session = Depends(get_db)):
         try:
             form.__dict__.update(msg="Login Successful")
             response = templates.TemplateResponse("auth/login.html", form.__dict__)
-            user_login(response=response, form_data=form, db=db)
+            login_for_access_token(response=response, form_data=form, db=db)
             return response
         except HTTPException:
             form.__dict__.update(msg="")

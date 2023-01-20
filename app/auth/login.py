@@ -2,8 +2,8 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from .utils import OAuth2PasswordBearerWithCookie
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
-from ..dependencies import get_db
-from ..models.models import User
+from dependencies import get_db
+from models.models import User
 from .hashing import Hasher
 from jose import jwt
 from decouple import config

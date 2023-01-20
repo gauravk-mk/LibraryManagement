@@ -37,9 +37,9 @@ class UserCreatedefault(BaseModel):
 
 class UserCreate(UserCreatedefault):
     created_by: str
-    created_on: str
-    modified_by: int
-    modified_on: str
+    created_on: date
+    modified_by: str
+    modified_on: date
 
 
 class UserLoginSchema(UserBase):
@@ -68,3 +68,7 @@ class LibraryAcoount(LibraryAccountBase):
     class Config:
         orm_mode = True
   
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
