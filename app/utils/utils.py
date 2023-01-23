@@ -83,3 +83,11 @@ def is_book_available(title,db):
                             detail=f"No Book with this title: {title} found")
     else:
         return True
+
+def get_issues_of_user(email,db):
+    issues=[]
+    issues = db.query(models.LibraryAccount).filter(models.LibraryAccount.owner_email==email).all()
+    # print(issues)
+    return issues
+
+    

@@ -22,18 +22,30 @@
           <tr>
             <th scope="row">User Email</th>
             <td colspan="2">{{user.email}}</td>
-            
-          </tr>
-          <tr>
-            <th scope="row">Book Title</th>
-           
-          </tr>
-          <tr>
-            <th scope="row">Return Date</th>
-          
           </tr>
         </tbody>
     </table>
   </div>
+
+
+  <div class="container">
+    <!-- col-sm-10 mr-auto -->
+    <div class="row">
+      {% for issue in issues %}
+        
+          {% with issue=issue %}
+          {% include "components/issuecard.html" %}
+          {% endwith %}
+          {% if loop.index %3 %}
+            </div>
+          {% else %}
+            </div></div><br><div class="row">
+          {% endif %}
+      {% endfor %}
+  </div>
+  
+  
+  </div>
+  
 </div>
 {% endblock %}

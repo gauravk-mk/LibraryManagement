@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from webapps.books.forms import BookCreateForm
 from jose import jwt
 from decouple import config
-from utils.utils import get_user_from_email
+from utils.utils import get_user_from_email, get_issues_of_user
 
 
 JWT_SECRET = config("secret")
@@ -55,8 +55,8 @@ def get_profile(request: Request,db: Session = Depends(get_db)):
         )
         email = payload.get("sub")
         user = get_user_from_email(email,db)
-
-    return templates.TemplateResponse("components/profile.html", {"request": request, "user":user})
+        issues = get_issues_of_user(email,db)
+    return templates.TemplateResponse("components/profile.html", {"request": request, "user":user,"issues":issues})
 
 
 @router.get("/detail/{id}")
