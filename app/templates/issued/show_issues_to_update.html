@@ -9,7 +9,7 @@
   <div class="container">
   <div class="row">
     <div class="col">
-      <h1 class="display-5 text-center mb-3">Library History</h1>
+      <h1 class="display-5 text-center mb-3">Issued Books</h1>
     </div>
     <div id="result" class="text-danger text-bold lead"></div>
   </div>
@@ -23,7 +23,6 @@
             <th scope="col">Book Title</th>
             <th scope="col">Date Issued</th>
             <th scope="col">Return Date</th>
-            <th scope="col">Actual Return Date</th>
             
           </tr>
         </thead>
@@ -35,7 +34,7 @@
                 <td>{{issue.book_title}}</td>
                 <td class="date">{{issue.date_issued}}</td>
                 <td>{{issue.valid_till}}</td>
-                <td class="date">{{issue.actual_return_date}}</td>
+          
                 
             </tr>
           {% endfor %}

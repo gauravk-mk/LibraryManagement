@@ -106,7 +106,7 @@ async def create_book(request: Request, db: Session = Depends(get_db)):
             book = create_new_book(book=book, db=db, created_by=email)
         
             return responses.RedirectResponse(
-                f"/book-details/{book.id}", status_code=status.HTTP_302_FOUND
+                f"/detail/{book.id}", status_code=status.HTTP_302_FOUND
             )
         except Exception as e:
             print(e)

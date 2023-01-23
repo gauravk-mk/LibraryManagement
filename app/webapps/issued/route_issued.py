@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from webapps.issued.forms import IssuedCreateForm
 from jose import jwt
 from decouple import config
-from utils.utils import get_book_from_id, get_book_from_title,is_book_available
+from utils.utils import get_book_from_id, get_book_from_title,is_book_available,get_issue_by_id
 from datetime import date, timedelta, datetime
 
 
@@ -106,6 +106,19 @@ async def create_issue_button(id:int,request: Request, db: Session = Depends(get
             f"/issue-details/{issue.id}", status_code=status.HTTP_302_FOUND
         )
             
+@router.get("/return-a-book/{id}")
+async def delete_issue(id:int,request: Request, db: Session = Depends(get_db)):
+    current_issue = get_issue_by_id(id,db)
+    current_book=get_book_from_title(current_issue.book_title,db)
+    current_book.quantity=current_book.quantity+1
+    db.delete(current_issue)
+    db.commit()
+    db.refresh(current_book)
+    return responses.RedirectResponse(
+        "/profile/", status_code=status.HTTP_302_FOUND
+    )
+
+
 
 @router.get("/lib_history/")
 def show_issues_to_update(request: Request, db: Session = Depends(get_db),):

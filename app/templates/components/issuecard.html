@@ -5,7 +5,6 @@
           <h5 class="card-title">{{ issue.book_title }}</h5>
           <p class="card-text">Return Date : {{ issue.valid_till}}</p>
           <p class="card-text">Date Issued : {{ issue.date_issued }} </p> 
-          <a href="/detail/{{issue.id}}" class="btn btn-primary">Read More</a>
           {% if user %}
           {% include "components/popup2.html" %}
           {% endif %}

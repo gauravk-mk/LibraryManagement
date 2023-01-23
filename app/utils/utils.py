@@ -90,4 +90,6 @@ def get_issues_of_user(email,db):
     # print(issues)
     return issues
 
-    
+def get_issue_by_id(id,db):
+    issue=db.query(models.LibraryAccount).filter(models.LibraryAccount.id==id).first()
+    return issue
