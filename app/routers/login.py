@@ -54,7 +54,7 @@ def login_for_access_token(
 ):
     user = authenticate_user(form_data.username, form_data.password, db)
     # print(user.username)
-    print(user.email)
+    # print(user.email)
     print("----")
     if not user:
         raise HTTPException(

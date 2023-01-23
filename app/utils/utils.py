@@ -80,7 +80,7 @@ def is_book_available(title,db):
     book = get_book_from_title(title,db)
     if not book and book.quantity<1 :
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"No Book with this title: {title} found")
+                            detail=f"No Book: {title} found or Not enough books")
     else:
         return True
 
