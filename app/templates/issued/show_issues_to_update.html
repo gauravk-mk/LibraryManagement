@@ -1,0 +1,87 @@
+{% extends "shared/base.html" %}
+
+
+{% block title %}
+  <title>Return Books</title>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+  <div class="row">
+    <div class="col">
+      <h1 class="display-5 text-center mb-3">Library History</h1>
+    </div>
+    <div id="result" class="text-danger text-bold lead"></div>
+  </div>
+
+  <div class="row">
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Sr. No.</th>
+            <th scope="col">User Email</th>
+            <th scope="col">Book Title</th>
+            <th scope="col">Date Issued</th>
+            <th scope="col">Return Date</th>
+            <th scope="col">Actual Return Date</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+          {% for issue in issued %}
+            <tr>
+                <th scope="row">{{loop.index}}</th>
+                <td>{{issue.owner_email}}</td>
+                <td>{{issue.book_title}}</td>
+                <td class="date">{{issue.date_issued}}</td>
+                <td>{{issue.valid_till}}</td>
+                <td class="date">{{issue.actual_return_date}}</td>
+                
+            </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+  </div>
+  <a href="#" class="btn btn-secondary" onclick="history.back()">Back</a>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script type="text/javascript">
+
+$(function () {
+    $('table table-striped tr').each(function () {
+        if ($(this).find('.date').html() == None) {
+            $(this).find('.btn btn-outline-danger').prop('disabled', false);
+        }
+        else {
+            $(this).find('.btn btn-outline-danger').prop('disabled', true);
+        }
+    });
+});
+
+function update_issue(id, email, book, actual_return_date)
+{
+    if (actual_return_date === 'None')
+    {
+    let update = document.getElementById("date");
+    let currentDate = new Date().toJSON().slice(0, 10);
+    console.log(currentDate);
+
+    const data = {"id": id, "email": email, "book": book, "actual_return_date": currentDate};
+    fetch('/issue/update/'+id,{
+        method:'PUT',
+        credentials: 'same-origin',
+        headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(data),
+})
+.then((response) => response.json())
+  .then(document.getElementById('result').innerHTML = "Refreshing...")
+  .then(data => document.getElementById('result').innerHTML = data.detail);
+}
+  }
+</script>
+{% endblock %}

@@ -23,8 +23,9 @@ class Book(Base):
     __tablename__ = "books"
     __table_args__ = {'extend_existing': True}
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
-    description = Column(String, index=True)
+    title = Column(String, unique=True, nullable=False)
+    author = Column(String)
+    description = Column(String)
     quantity=Column(Integer)
     # owner_id = Column(Integer, ForeignKey("users.id"))
  
@@ -33,12 +34,12 @@ class Book(Base):
 
 class LibraryAccount(Base):
     __tablename__ = "accounts"
-    acc_id = Column(Integer, primary_key=True, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id"))
-    book_id = Column(Integer, ForeignKey("books.id"))
+    id = Column(Integer, primary_key=True, index=True)
+    owner_email = Column(String, ForeignKey("users.email"))
+    book_title = Column(String, ForeignKey("books.title"))
     date_issued = Column(String)
     valid_till = Column(String)
-
+    actual_return_date = Column(String)
 
 
 # class LibraryAdmin(Base):

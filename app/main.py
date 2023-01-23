@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
 from routers import users, books
 from auth import login
-from webapp.base import api_router as webapp_router
+from webapps.base import api_router as webapp_router
 from fastapi.staticfiles import StaticFiles
 
 

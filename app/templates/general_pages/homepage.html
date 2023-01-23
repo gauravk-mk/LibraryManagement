@@ -1,10 +1,5 @@
 {% extends "shared/base.html" %}
 
-
-{% block title %}
-  <title>Job Board</title>
-{% endblock %}
-
 {% block content %}
   {% with msg=msg %}
     {% include "components/alerts.html" %}
@@ -12,22 +7,27 @@
   <div class="container">
   <div class="row">
     <div class="col">
-      <h1 class="display-5">Find Jobs..</h1>
+      <h1 class="display-5">Welcome to Lib-sys..</h1>
+      <h1 class="display-2">Library Management System</h1>
     </div>
-  </div>
-  <div class="row">
-      {% for job in jobs %}
-        <div class="col-lg-4 col-md-3 col-sm-10 mr-auto">
-          {% with obj=job %}
-      		{% include "components/cards.html" %}
-    	    {% endwith %}
 
-          {% if loop.index %3 %}
-            </div>
-          {% else %}
-            </div></div><br><div class="row">
-          {% endif %}
-      {% endfor %}
   </div>
+  <!-- col-sm-10 mr-auto -->
+  <div class="row">
+    {% for book in books %}
+      
+        {% with obj=book %}
+        {% include "components/cards.html" %}
+        {% endwith %}
+
+        {% if loop.index %3 %}
+          </div>
+        {% else %}
+          </div></div><br><div class="row">
+        {% endif %}
+    {% endfor %}
+</div>
+
+
 </div>
 {% endblock %}

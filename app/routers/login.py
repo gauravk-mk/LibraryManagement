@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from dependencies import get_db
 from datetime import date, timedelta, datetime
 from auth.hashing import Hasher
-
+from auth.utils import OAuth2PasswordBearerWithCookie
 from jose import jwt
 from decouple import config
 
@@ -53,6 +53,9 @@ def login_for_access_token(
     db: Session = Depends(get_db),
 ):
     user = authenticate_user(form_data.username, form_data.password, db)
+    # print(user.username)
+    print(user.email)
+    print("----")
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -62,11 +65,15 @@ def login_for_access_token(
     access_token = create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
+    print(access_token)
+    print("---acc token--")
     response.set_cookie(
-        key="access_token", value=f"Bearer {access_token}", httponly=True
+        key="access_token", value=f"Bearer {access_token}"
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    
+    return access_token
 
+oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="/login/token")
 
 
 def get_current_user_from_token(token, db):

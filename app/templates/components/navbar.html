@@ -1,12 +1,12 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">
-		<img src="{{ url_for('static', path='images/logo.png') }}" alt="JobBoard navbar image", width="30", height="24">
+		<!-- <img src="{{ url_for('static', path='images/logo.png') }}" alt="JobBoard navbar image", width="30", height="24"> -->
 	</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="<nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">
-		<img src="{{ url_for('static', path='images/logo.png') }}" alt="JobBoard navbar image", width="30", height="24">
+		<!-- <img src="{{ url_for('static', path='images/logo.png') }}" alt="JobBoard navbar image", width="30", height="24"> -->
 	</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -14,7 +14,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/">Home</a>
+          <a class="nav-link active" aria-current="page" href="/home/">Home</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/docs/">Docs</a>
@@ -22,25 +22,35 @@
 		<li class="nav-item">
 			<a class="nav-link" href="/redoc/">Redoc</a>
 		</li>
+        
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Account
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" href="/register/">Register</a></li>
-            <li><a class="dropdown-item" href="/login">Login</a></li>
+            <li><a class="dropdown-item" href="/login/">Login</a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1 rolw="button" data-bs-toggle="dropdown"  aria-expanded="false"">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" rolw="button" data-bs-toggle="dropdown"  aria-expanded="false">
 			Activity
 		  </a>
 		  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-			<li><a class="dropdown-item" href="/post-a-job">Issue Book</a></li>
-			<li><a class="dropdown-item" href="/update-delete-job">Return Book </a></li>
+      <li><a class="dropdown-item" href="/post-a-book">Add Book</a></li>
+			<li><a class="dropdown-item" href="/post-a-issue">Issue Book</a></li>
+			<li><a class="dropdown-item" href="/lib_history">Library History </a></li>
 		  </ul>
+      {% if user %}
+            <li><a class="dropdown-item" href="/logout/">logout</a></li>
+        {% endif %}
         </li>
       </ul>
+      {% if user %}
+      <a class="navbar-brand" href="/profile/">
+        <img src="{{ url_for('static', path='images/profile.png') }}" alt="JobBoard navbar image", width="30", height="24">
+      </a>
+      {% endif %}
       <form class="d-flex" action="/search/">
         <input class="form-control me-2" id="autocomplete" name="query" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>

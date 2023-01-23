@@ -1,0 +1,39 @@
+{% extends "shared/base.html" %}
+
+{% block title %}
+  <title>User Detail</title>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+  <div class="row">
+    <div class="col">
+      <h1 class="display-5">User Detail</h1>
+    </div>
+  </div>
+
+  <div class="row">
+      <table class="table table-striped table-hover">
+        <tbody>
+          <tr>
+            <th scope="row">User ID</th>
+            <td colspan="2">{{user.id}}</td>
+          </tr>
+          <tr>
+            <th scope="row">User Email</th>
+            <td colspan="2">{{user.email}}</td>
+            
+          </tr>
+          <tr>
+            <th scope="row">Book Title</th>
+           
+          </tr>
+          <tr>
+            <th scope="row">Return Date</th>
+          
+          </tr>
+        </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

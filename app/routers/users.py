@@ -87,8 +87,8 @@ async def issue_Book(acc:schemas.LibraryAccountBase = Body(default=None), db: Se
 @router.delete('/users/returnbook/{id}',tags=["Account-Activity"])
 async def return_book(id: int, db: Session = Depends(get_db),token: str = Depends(oauth2_scheme)):
     current_acc = getAccountByIssueId(id,db)
-    book_id = current_acc.book_id
-    book= getBookbyId(book_id,db)
+    title = current_acc.book_title
+    book= getBookbyTitle(title,db)
     book.quantity = book.quantity+1
     db.delete(current_acc)
     db.commit()
@@ -97,8 +97,8 @@ async def return_book(id: int, db: Session = Depends(get_db),token: str = Depend
 
 
 
-def isBookAvailable(id,db):
-    book = getBookbyId(id,db)
+def isBookAvailable(title,db):
+    book = getBookbyTitle(title,db)
     if not book and book.quantity<1 :
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"No Book with this id: {id} found")
@@ -123,8 +123,8 @@ def getUserbyId(id, db):
     else:
         return user
 
-def getBookbyId(id,db):
-    book = db.query(models.Book).filter(models.Book.id==id).first()
+def getBookbyTitle(title,db):
+    book = db.query(models.Book).filter(models.Book.title==title).first()
     if not book:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"No Book with this ID found")
@@ -132,7 +132,7 @@ def getBookbyId(id,db):
         return book
 
 def getAccountByIssueId(id,db):
-    acc = db.query(models.LibraryAccount).filter(models.LibraryAccount.acc_id==id).first()
+    acc = db.query(models.LibraryAccount).filter(models.LibraryAccount.id==id).first()
     if not acc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"No Account with this ID found")
@@ -141,27 +141,28 @@ def getAccountByIssueId(id,db):
 
 # @router.post('/users/acount',tags=["users"])
 def issue_account(db, acc):
-    currBookId = acc.book_id
-    curr_user_id = acc.owner_id
-    user = getUserbyId(curr_user_id,db)
+    curr_book_title = acc.book_title
+    curr_user_email = acc.owner_email
+    # user = getUserbyEmail(curr_user_email,db)
     curr_date = date.isoformat(date.today())
     last_date = date.isoformat(datetime.now()+ timedelta(days=15))
     new_acc = models.LibraryAccount(
-        book_id=currBookId, 
-        owner_id = curr_user_id,
+        book_title=curr_book_title, 
+        owner_email = curr_user_email,
         date_issued = curr_date,
         valid_till = last_date,
-        created_by = user.email,
-        modified_by = user.email,
+        created_by = curr_user_email,
+        modified_by = curr_user_email,
         )    
-    curr_book = getBookbyId(currBookId,db)
-    if isBookAvailable(currBookId,db):  
+    curr_book = getBookbyTitle(curr_book_title,db)
+    if isBookAvailable(curr_book_title,db):  
         curr_book.quantity = curr_book.quantity-1
     db.add(new_acc)
     db.commit()
-    curr_book = getBookbyId(currBookId,db)
+    curr_book = getBookbyTitle(curr_book_title,db)
+
     return {"status": new_acc, 
-            "issue_id": new_acc.acc_id,
+            "issue_id": new_acc.id,
             "Book Bought": curr_book
     }
 
