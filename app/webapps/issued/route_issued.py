@@ -113,7 +113,7 @@ async def delete_issue(id:int,request: Request, db: Session = Depends(get_db)):
     current_book.quantity=current_book.quantity+1
     db.delete(current_issue)
     db.commit()
-    db.refresh(current_book)
+    # db.refresh(current_book)
     return responses.RedirectResponse(
         "/profile/", status_code=status.HTTP_302_FOUND
     )

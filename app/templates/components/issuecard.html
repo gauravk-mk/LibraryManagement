@@ -5,9 +5,9 @@
           <h5 class="card-title">{{ issue.book_title }}</h5>
           <p class="card-text">Return Date : {{ issue.valid_till}}</p>
           <p class="card-text">Date Issued : {{ issue.date_issued }} </p> 
-          {% if user %}
-          {% include "components/popup2.html" %}
-          {% endif %}
+          <a href="/return-a-book/{{issue.id}}" class="btn btn-outline-success" >
+                  Return Book
+              </a>
         </div>
       </div>
     </div>

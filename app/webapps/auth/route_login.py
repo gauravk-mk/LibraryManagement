@@ -1,9 +1,11 @@
-from routers.login import login_for_access_token
-from dependencies import get_db
 from fastapi import APIRouter, Depends, HTTPException, Request, status, responses
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from webapps.auth.forms import LoginForm
+from routers.login import login_for_access_token
+from dependencies import get_db
+
+
 
 templates = Jinja2Templates(directory="templates")
 router = APIRouter(include_in_schema=False)
